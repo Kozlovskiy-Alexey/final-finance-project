@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/chat-bot-service
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+server:
+  port: 8085
+bot:
+  name: ${SimbaFinanceAssistantBot}
+  token: ${5495997505:AAHFntyPnCcADGWUPUe9V7G8_LVHcFQ6Aeg}

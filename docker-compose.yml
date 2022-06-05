@@ -1,0 +1,82 @@
+version: '3.5'
+services:
+  minio:
+    build: minio
+    command: server --console-address ":9001" /finance_data
+    environment:
+      MINIO_ROOT_USER: 9Z939G61IPEV0WFHWIW1
+      MINIO_ROOT_PASSWORD: krPc7XIcvXPCGnZpX1BtMnmWr4OaTzXqsH+50Jd6
+    ports:
+      - "83:9000"
+      - "84:9001"
+    networks:
+      - finance_ntwrk
+  db:
+    build: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    networks:
+      - finance_ntwrk
+  pgadmin:
+    build: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "82:80"
+    networks:
+      - finance_ntwrk
+  swagger-ui:
+    build: swagger-ui
+    ports:
+      - "81:8080"
+    networks:
+      - finance_ntwrk
+
+
+  account-scheduler-service:
+    build: account-scheduler-service
+    networks:
+      - finance_ntwrk
+  account-service:
+    build: account-service
+    networks:
+      - finance_ntwrk
+  user-service:
+    build: user-service
+    networks:
+      - finance_ntwrk
+  classifier-service:
+    build: classifier-service
+    networks:
+      - finance_ntwrk
+  report-service:
+    build: report-service
+    networks:
+      - finance_ntwrk
+  telegram-service:
+    build: telegram-service
+    networks:
+      - finance_ntwrk
+  mail-scheduler-service:
+    build: mail-scheduler-service
+    networks:
+      - finance_ntwrk
+  mail-service:
+    build: mail-service
+    networks:
+      - finance_ntwrk
+  proxy:
+    build: proxy
+    ports:
+      - "80:80"
+    networks:
+      - finance_ntwrk
+networks:
+    finance_ntwrk:
+      name: finance_ntwrk

@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/account-service?currentSchema=finance_app
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+
+server:
+  port: 8081
+

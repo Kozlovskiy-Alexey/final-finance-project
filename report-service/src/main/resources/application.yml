@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/report-service
+    username: postgres
+    password: postgres
+server:
+  port: 8084
