@@ -7,6 +7,7 @@ import by.itacademy.classifier.entity.Category;
 import by.itacademy.classifier.service.api.ICategoryService;
 import by.itacademy.classifier.dto.util.mapper.CategoryToDtoMapper;
 import by.itacademy.classifier.dto.util.validator.CategoryDtoValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CategoryService implements ICategoryService {
 
@@ -41,6 +43,7 @@ public class CategoryService implements ICategoryService {
         entity.setDtCreate(dateTime);
         entity.setDtUpdate(dateTime);
         Category savedCategory = categoryRepository.save(entity);
+        log.info("NEW Category " + entity + " saved.");
         return mapper.entityToDto(savedCategory);
     }
 

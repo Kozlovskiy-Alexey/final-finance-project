@@ -1,0 +1,91 @@
+2022-06-06 16:30:54,870 INFO org.springframework.boot.StartupInfoLogger [main] Starting AccountApplication using Java 11.0.14 on Alexey with PID 6804 (D:\Alexey\final project\finance\account-service\target\classes started by Алексей in D:\Alexey\final project\finance)
+2022-06-06 16:30:54,870 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to 1 default profile: "default"
+2022-06-06 16:30:55,479 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-06-06 16:30:55,542 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Finished Spring Data repository scanning in 46 ms. Found 4 JPA repository interfaces.
+2022-06-06 16:30:55,917 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8081 (http)
+2022-06-06 16:30:55,932 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8081"]
+2022-06-06 16:30:55,932 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2022-06-06 16:30:55,932 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet engine: [Apache Tomcat/9.0.62]
+2022-06-06 16:30:56,026 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing Spring embedded WebApplicationContext
+2022-06-06 16:30:56,026 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [main] Root WebApplicationContext: initialization completed in 1109 ms
+2022-06-06 16:30:56,136 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2022-06-06 16:30:56,276 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2022-06-06 16:30:56,323 INFO org.hibernate.jpa.internal.util.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-06-06 16:30:56,354 INFO org.hibernate.Version [main] HHH000412: Hibernate ORM core version 5.6.8.Final
+2022-06-06 16:30:56,464 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [main] HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-06-06 16:30:56,557 INFO org.hibernate.dialect.Dialect [main] HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+2022-06-06 16:30:56,979 INFO org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator [main] HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-06-06 16:30:56,995 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-06-06 16:30:57,011 WARN by.itacademy.account.config.ApplicationConfiguration [main] App is loaded!
+2022-06-06 16:30:57,026 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration [main] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-06-06 16:30:57,432 WARN org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [main] 
+
+Using generated security password: 44efc49b-df1e-4e9e-a2fb-aa77fad91c59
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2022-06-06 16:30:57,557 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@46ff1aad, org.springframework.security.web.context.SecurityContextPersistenceFilter@5f4f6f89, org.springframework.security.web.header.HeaderWriterFilter@7d5d77a6, org.springframework.web.filter.CorsFilter@6c2fea95, org.springframework.security.web.authentication.logout.LogoutFilter@3450bd13, by.itacademy.account.controller.filter.JwtFilter@1378eea2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@ef220e4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1002b06d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6ed87ccf, org.springframework.security.web.session.SessionManagementFilter@1d1deb11, org.springframework.security.web.access.ExceptionTranslationFilter@25c16cf7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@48188d23]
+2022-06-06 16:30:57,698 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8081"]
+2022-06-06 16:30:57,729 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8081 (http) with context path ''
+2022-06-06 16:30:57,745 INFO org.springframework.boot.StartupInfoLogger [main] Started AccountApplication in 3.699 seconds (JVM running for 4.589)
+2022-06-06 16:31:29,827 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8081-exec-3] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-06-06 16:31:29,828 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8081-exec-3] Initializing Servlet 'dispatcherServlet'
+2022-06-06 16:31:29,829 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8081-exec-3] Completed initialization in 1 ms
+2022-06-06 16:31:29,967 ERROR by.itacademy.account.dto.util.validator.AccountDtoValidator [http-nio-8081-exec-3] Currency uuid is not correct.
+2022-06-06 16:31:31,053 ERROR by.itacademy.account.service.RestAccountService [http-nio-8081-exec-3] Error while getting currencyId a4ce2059-553e-4da0-96c0-c96a5536a68  from data base.
+2022-06-06 16:32:03,867 ERROR by.itacademy.account.dto.util.validator.AccountDtoValidator [http-nio-8081-exec-5] Currency uuid is not correct.
+2022-06-06 16:32:04,190 ERROR by.itacademy.account.dto.util.validator.AccountDtoValidator [http-nio-8081-exec-5] Currency a4ce2059-553e-4da0-96c0-c96a5536a68 is not in the database.
+2022-06-06 17:02:12,845 INFO org.springframework.boot.StartupInfoLogger [main] Starting AccountApplication using Java 11.0.14 on Alexey with PID 8464 (D:\Alexey\final project\finance\account-service\target\classes started by Алексей in D:\Alexey\final project\finance)
+2022-06-06 17:02:12,861 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to 1 default profile: "default"
+2022-06-06 17:02:13,486 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-06-06 17:02:13,548 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Finished Spring Data repository scanning in 53 ms. Found 4 JPA repository interfaces.
+2022-06-06 17:02:13,970 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8081 (http)
+2022-06-06 17:02:13,970 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8081"]
+2022-06-06 17:02:13,970 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2022-06-06 17:02:13,970 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet engine: [Apache Tomcat/9.0.62]
+2022-06-06 17:02:14,080 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing Spring embedded WebApplicationContext
+2022-06-06 17:02:14,080 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [main] Root WebApplicationContext: initialization completed in 1172 ms
+2022-06-06 17:02:14,189 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2022-06-06 17:02:14,330 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2022-06-06 17:02:14,361 INFO org.hibernate.jpa.internal.util.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-06-06 17:02:14,392 INFO org.hibernate.Version [main] HHH000412: Hibernate ORM core version 5.6.8.Final
+2022-06-06 17:02:14,502 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [main] HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-06-06 17:02:14,595 INFO org.hibernate.dialect.Dialect [main] HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+2022-06-06 17:02:15,017 INFO org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator [main] HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-06-06 17:02:15,033 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-06-06 17:02:15,033 WARN by.itacademy.account.config.ApplicationConfiguration [main] App is loaded!
+2022-06-06 17:02:15,064 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration [main] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-06-06 17:02:15,470 WARN org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [main] 
+
+Using generated security password: 21234097-5d7d-4313-9609-ae0ae3202455
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2022-06-06 17:02:15,595 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@e88e14, org.springframework.security.web.context.SecurityContextPersistenceFilter@738ed8f5, org.springframework.security.web.header.HeaderWriterFilter@71de1091, org.springframework.web.filter.CorsFilter@c157abf, org.springframework.security.web.authentication.logout.LogoutFilter@7c79f2cf, by.itacademy.account.controller.filter.JwtFilter@2ffe243f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@478c84aa, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3cab07dd, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@472dbaf5, org.springframework.security.web.session.SessionManagementFilter@77d58f3a, org.springframework.security.web.access.ExceptionTranslationFilter@50b4e7b2, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@10820978]
+2022-06-06 17:02:15,736 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8081"]
+2022-06-06 17:02:15,783 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8081 (http) with context path ''
+2022-06-06 17:02:15,783 INFO org.springframework.boot.StartupInfoLogger [main] Started AccountApplication in 3.709 seconds (JVM running for 4.589)
+2022-06-06 17:03:02,650 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8081-exec-2] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-06-06 17:03:02,666 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8081-exec-2] Initializing Servlet 'dispatcherServlet'
+2022-06-06 17:03:02,666 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8081-exec-2] Completed initialization in 0 ms
+2022-06-06 17:03:03,369 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-2] Operation by.itacademy.account.entity.Operation@32817585 saved
+2022-06-06 17:03:32,545 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-3] Operation by.itacademy.account.entity.Operation@3cafbfa0 saved
+2022-06-06 17:04:02,651 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-4] Operation by.itacademy.account.entity.Operation@6cd42e17 saved
+2022-06-06 17:04:32,545 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-5] Operation by.itacademy.account.entity.Operation@7f766e44 saved
+2022-06-06 17:05:02,569 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-6] Operation by.itacademy.account.entity.Operation@1b67e6ab saved
+2022-06-06 17:05:32,455 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-8] Operation by.itacademy.account.entity.Operation@38346e4b saved
+2022-06-06 17:06:02,679 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-9] Operation by.itacademy.account.entity.Operation@242fd9b8 saved
+2022-06-06 17:06:32,471 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-10] Operation by.itacademy.account.entity.Operation@4b427537 saved
+2022-06-06 17:07:02,453 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-2] Operation by.itacademy.account.entity.Operation@54e526db saved
+2022-06-06 17:07:32,499 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-3] Operation by.itacademy.account.entity.Operation@5aa28218 saved
+2022-06-06 17:08:02,472 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-5] Operation by.itacademy.account.entity.Operation@160857eb saved
+2022-06-06 17:08:32,474 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-8] Operation by.itacademy.account.entity.Operation@2a408b32 saved
+2022-06-06 17:09:02,489 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-7] Operation by.itacademy.account.entity.Operation@11b7f62d saved
+2022-06-06 17:09:32,490 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-10] Operation by.itacademy.account.entity.Operation@e4b238a saved
+2022-06-06 17:10:02,469 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-2] Operation by.itacademy.account.entity.Operation@6ac70d8f saved
+2022-06-06 17:10:32,504 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-3] Operation by.itacademy.account.entity.Operation@57f6e6d6 saved
+2022-06-06 17:11:02,447 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-1] Operation by.itacademy.account.entity.Operation@2be580a3 saved
+2022-06-06 17:11:32,460 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-4] Operation by.itacademy.account.entity.Operation@17222bd4 saved
+2022-06-06 17:12:02,475 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-5] Operation by.itacademy.account.entity.Operation@39a6ed27 saved
+2022-06-06 17:12:32,466 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-6] Operation by.itacademy.account.entity.Operation@46507763 saved
+2022-06-06 17:13:02,483 INFO by.itacademy.account.service.OperationService [http-nio-8081-exec-8] Operation by.itacademy.account.entity.Operation@40653224 saved

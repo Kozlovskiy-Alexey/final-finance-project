@@ -7,6 +7,7 @@ import by.itacademy.classifier.entity.Currency;
 import by.itacademy.classifier.service.api.ICurrencyService;
 import by.itacademy.classifier.dto.util.mapper.CurrencyToDtoMapper;
 import by.itacademy.classifier.dto.util.validator.CurrencyDtoValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CurrencyService implements ICurrencyService {
 
@@ -41,6 +43,7 @@ public class CurrencyService implements ICurrencyService {
         entity.setDtCreate(dateTime);
         entity.setDtUpdate(dateTime);
         Currency currency = currencyRepository.save(entity);
+        log.info("NEW Currency " + entity + " saved.");
         return mapper.entityToDto(currency);
     }
 

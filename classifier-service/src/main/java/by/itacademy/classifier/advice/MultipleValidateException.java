@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ValidateException extends IllegalArgumentException {
+public class MultipleValidateException extends IllegalArgumentException {
 
     private final List<ResponseError> responseErrors;
 
-    public ValidateException(List<ResponseError> responseError) {
+    public MultipleValidateException(List<ResponseError> responseError) {
         this.responseErrors = responseError;
     }
 

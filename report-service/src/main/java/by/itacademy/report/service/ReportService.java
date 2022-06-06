@@ -14,6 +14,7 @@ import by.itacademy.report.entity.ReportInfo;
 import by.itacademy.report.service.api.IReportService;
 import by.itacademy.report.service.handler.ReportHandlerFactory;
 import by.itacademy.report.service.handler.api.IReportHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ReportService implements IReportService {
 
@@ -60,6 +62,7 @@ public class ReportService implements IReportService {
                 .report(text)
                 .build();
         Report entity = reportRepository.save(report);
+        log.info("New report saved " + report);
 
         for (String account : params.getAccounts()) {
             ReportInfo reportInfo = ReportInfo.builder()
@@ -120,6 +123,7 @@ public class ReportService implements IReportService {
             byte[] report = isPresent.get().getReport();
             return new ByteArrayInputStream(report);
         } else {
+            log.error("There is no report with number " + reportId + " in the data base.");
             throw new SingleValidateException(new ResponseError("There is no report with number " + reportId +
                     " in the data base."));
         }

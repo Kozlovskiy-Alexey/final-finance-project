@@ -1,15 +1,16 @@
 package by.itacademy.classifier.dto.util.validator;
 
-import by.itacademy.classifier.advice.ValidateException;
+import by.itacademy.classifier.advice.MultipleValidateException;
 import by.itacademy.classifier.dto.CurrencyDto;
 import by.itacademy.classifier.entity.Currency;
 import by.itacademy.classifier.repository.ICurrencyRepository;
 import by.itacademy.classifier.dto.util.validator.api.IDtoValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 
+@Slf4j
 @Component
 public class CurrencyDtoValidator implements IDtoValidator<CurrencyDto> {
 
@@ -21,28 +22,31 @@ public class CurrencyDtoValidator implements IDtoValidator<CurrencyDto> {
 
     @Override
     public void validateDto(CurrencyDto dto) {
-        ValidateException validateException = new ValidateException(new ArrayList<>());
+        MultipleValidateException multipleValidateException = new MultipleValidateException(new ArrayList<>());
         if (dto.getTitle().isEmpty()) {
-            validateException.addError("title shouldn't be empty");
+            multipleValidateException.addError("Title shouldn't be empty.");
         }
         if (!dto.getTitle().matches("[A-Z]{3}")) {
-            validateException.addError("title should consist of three upper case letters");
+            multipleValidateException.addError("Title should consist of three upper case letters.");
         }
         if (dto.getDescription().isEmpty() || dto.getDescription() == null) {
-            validateException.addError("description shouldn't be empty or null");
+            multipleValidateException.addError("Description shouldn't be empty or null.");
         }
-        if (validateCurrency(dto.getTitle())) {
-            validateException.addError("currency " + dto.getTitle() + " is already in the database");
+        if (!validateCurrency(dto.getTitle())) {
+            multipleValidateException.addError("Currency " + dto.getTitle() + " is already in the database.");
         }
-        if (!validateException.getResponseErrors().isEmpty()) {
-            throw new ValidateException(validateException.getResponseErrors());
+        if (!multipleValidateException.getResponseErrors().isEmpty()) {
+            log.error("CurrencyDto is not valid.", multipleValidateException);
+            throw new MultipleValidateException(multipleValidateException.getResponseErrors());
         }
     }
 
     private boolean validateCurrency(String currency) {
         for (Currency c : currencyRepository.findAll()) {
-            if (!c.getTitle().equals(currency))
+            if (c.getTitle().equals(currency)) {
+                log.error("CurrencyId " + currency + " is not valid.");
                 return false;
+            }
         }
         return true;
     }

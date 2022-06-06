@@ -35,7 +35,7 @@ public class GlobalExceptionAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<List<ResponseError>> multipleValidateException(ValidateException ex) {
+    public ResponseEntity<List<ResponseError>> multipleValidateException(MultipleValidateException ex) {
         return new ResponseEntity<>(ex.getResponseErrors(), HttpStatus.BAD_REQUEST);
     }
 }

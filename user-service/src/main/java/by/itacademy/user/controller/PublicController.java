@@ -1,9 +1,8 @@
 package by.itacademy.user.controller;
 
-import by.itacademy.user.advice.ResponseError;
 import by.itacademy.user.controller.dto.LoginDto;
 import by.itacademy.user.controller.utils.JwtTokenUtil;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/public")
 public class PublicController {
@@ -38,6 +38,8 @@ public class PublicController {
                     .password(encoder.encode(loginDto.getPassword()))
                     .roles("USER")
                     .build());
+
+            log.info("NEW User registered. " + loginDto);
         }
         return "user registered";
     }
@@ -47,6 +49,7 @@ public class PublicController {
         UserDetails userDetails = userManager.loadUserByUsername(loginDto.getLogin());
 
         if(!encoder.matches(loginDto.getPassword(), userDetails.getPassword())){
+            log.error("Login attempt with wrong password " + loginDto.getPassword());
             throw new IllegalArgumentException("Password is not valid.");
         }
         return JwtTokenUtil.generateAccessToken(userDetails);

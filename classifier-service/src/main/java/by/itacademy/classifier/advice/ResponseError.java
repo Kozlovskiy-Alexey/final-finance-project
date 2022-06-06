@@ -1,5 +1,8 @@
 package by.itacademy.classifier.advice;
 
+import lombok.ToString;
+
+@ToString
 public class ResponseError {
     private String logref = "error";
     private String message;

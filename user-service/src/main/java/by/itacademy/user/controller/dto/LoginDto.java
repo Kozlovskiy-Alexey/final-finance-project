@@ -1,5 +1,8 @@
 package by.itacademy.user.controller.dto;
 
+import lombok.ToString;
+
+@ToString
 public class LoginDto {
     private String login;
     private String password;

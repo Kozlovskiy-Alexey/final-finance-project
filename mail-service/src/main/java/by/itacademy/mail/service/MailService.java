@@ -5,6 +5,7 @@ import by.itacademy.mail.advice.SingleValidateException;
 import by.itacademy.mail.dto.MailValidator;
 import by.itacademy.mail.dto.RequestDto;
 import by.itacademy.mail.service.api.IMailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 import java.util.List;
 
+@Slf4j
 @Service
 public class MailService implements IMailService {
 
@@ -42,8 +44,10 @@ public class MailService implements IMailService {
                     " has been sent as an attachment.");
             try {
                 this.mailSender.send(message);
+                log.info("Mail with report sent to " + params.getEmails());
             } catch (MailException ex) {
-                throw new SingleValidateException(new ResponseError("an error occurred while sending email"));
+                log.info("An error occurred while sending email to " + params.getEmails(), ex);
+                throw new SingleValidateException(new ResponseError("An error occurred while sending email."));
             }
         }
         return true;
@@ -67,8 +71,10 @@ public class MailService implements IMailService {
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 helper.addAttachment("report.xlsx", bads);
                 mailSender.send(message);
-            } catch (MessagingException e) {
-                e.printStackTrace();
+                log.info("Mail with report sent to " + params.getEmails());
+            } catch (MessagingException ex) {
+                log.info("An error occurred while sending email to " + params.getEmails(), ex);
+                throw new SingleValidateException(new ResponseError("An error occurred while sending email."));
             }
         }
         return true;

@@ -15,6 +15,7 @@ import by.itacademy.account.scheduler.repository.IScheduleRepository;
 import by.itacademy.account.scheduler.repository.IScheduledOperationRepository;
 import by.itacademy.account.scheduler.repository.entity.ScheduledOperation;
 import by.itacademy.account.scheduler.service.api.IScheduledOperationService;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ScheduledOperationService implements IScheduledOperationService {
 
@@ -78,6 +80,7 @@ public class ScheduledOperationService implements IScheduledOperationService {
         ScheduledOperation entity = scheduledOperationRepository.save(scheduledOperation);
         schedulerService.create(entity.getScheduleId(), entity.getId());
 
+        log.info("Scheduled operation created " + entity);
         return scheduledOperationToDtoMapper.entityToDto(entity);
     }
 
@@ -131,9 +134,11 @@ public class ScheduledOperationService implements IScheduledOperationService {
             UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             scheduledOperation.setUserLogin(userDetails.getUsername());
             ScheduledOperation save = scheduledOperationRepository.save(scheduledOperation);
+            log.info("Scheduled operation updated " + save);
             return scheduledOperationToDtoMapper.entityToDto(save);
         } else {
-            throw new ValidateException(List.of(new ResponseError("dt_update " + lastUpdate + " does not match in database")));
+            log.error("dt_update " + lastUpdate + " does not match in database");
+            throw new SingleValidateException(new ResponseError("dt_update " + lastUpdate + " does not match in database"));
         }
     }
 
