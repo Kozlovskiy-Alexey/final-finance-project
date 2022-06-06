@@ -1,5 +1,7 @@
 package by.itacademy.report.service;
 
+import by.itacademy.report.advice.ResponseError;
+import by.itacademy.report.advice.SingleValidateException;
 import by.itacademy.report.dto.ReportDto;
 import by.itacademy.report.dto.ReportPageDto;
 import by.itacademy.report.dto.RequestParamsDto;
@@ -12,7 +14,10 @@ import by.itacademy.report.entity.ReportInfo;
 import by.itacademy.report.service.api.IReportService;
 import by.itacademy.report.service.handler.ReportHandlerFactory;
 import by.itacademy.report.service.handler.api.IReportHandler;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -51,7 +56,7 @@ public class ReportService implements IReportService {
                 .status(ReportStatus.DONE.name())
                 .description(reportType.equals(ReportType.BALANCE) ?
                         getDescriptionByBalanceReport(reportType, params) : getDescription(reportType, params))
-                .reportType(ReportType.BALANCE.name())
+                .reportType(reportType.name())
                 .report(text)
                 .build();
         Report entity = reportRepository.save(report);
@@ -69,11 +74,15 @@ public class ReportService implements IReportService {
 
     @Override
     public ReportPageDto getReportPage(int page, int size) {
-        Pageable pageable = Pageable.ofSize(size).withPage(page - 1);
-        int totalElements = reportRepository.findAll().size();
-        int totalPages = totalElements / size;
-        List<Report> reports = reportRepository.findAll(pageable).getContent();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dtUpdate").descending());
+        Page<Report> reportPage = reportRepository.findAll(pageable);
+        int totalElements = (int) reportPage.getTotalElements();
+        int totalPages = reportPage.getTotalPages();
+        boolean isFirst = reportPage.isFirst();
+        boolean isLast = reportPage.isLast();
+        List<Report> reports = reportPage.getContent();
         List<ReportDto> content = new ArrayList<>();
+
         for (Report report : reports) {
             List<ReportInfo> infos = reportInfoRepository.findAllByAccountIdEqualsAndAccountId(report.getId());
             RequestParamsDto params = new RequestParamsDto();
@@ -95,20 +104,25 @@ public class ReportService implements IReportService {
         return ReportPageDto.builder()
                 .number(page)
                 .size(size)
-                .totalPages(totalPages == 0 ? 1 : totalPages)
+                .totalPages(totalPages)
                 .totalElements(totalElements)
-                .first(page == 1)
+                .first(isFirst)
                 .numberOfElements(reports.size())
-                .last(isLastElement(pageable, totalElements))
+                .last(isLast)
                 .content(content)
                 .build();
     }
 
     @Override
     public ByteArrayInputStream getReport(String reportId) {
-        Report entity = reportRepository.getById(reportId);
-        byte[] report = entity.getReport();
-        return new ByteArrayInputStream(report);
+        Optional<Report> isPresent = reportRepository.findById(reportId);
+        if (isPresent.isPresent()) {
+            byte[] report = isPresent.get().getReport();
+            return new ByteArrayInputStream(report);
+        } else {
+            throw new SingleValidateException(new ResponseError("There is no report with number " + reportId +
+                    " in the data base."));
+        }
     }
 
     @Override

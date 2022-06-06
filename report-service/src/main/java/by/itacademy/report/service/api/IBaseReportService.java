@@ -2,19 +2,12 @@ package by.itacademy.report.service.api;
 
 import by.itacademy.report.dto.RequestParamsDto;
 import by.itacademy.report.service.ReportType;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
 public interface IBaseReportService {
-
-    default boolean isLastElement(Pageable pageable, int totalElements) {
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
-        return (pageSize * pageNumber < totalElements);
-    }
 
     default long getMilliSecondFromLocalDateTime(LocalDateTime dateTime) {
         return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();

@@ -15,7 +15,11 @@ import by.itacademy.account.entity.Operation;
 import by.itacademy.account.service.api.IOperationService;
 import by.itacademy.account.dto.util.mapper.OperationToDtoMapper;
 import by.itacademy.account.dto.util.validator.OperationDtoValidator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class OperationService implements IOperationService {
@@ -39,7 +44,8 @@ public class OperationService implements IOperationService {
 
     public OperationService(IOperationRepository operationRepository, IAccountRepository accountRepository,
                             OperationToDtoMapper operationToDtoMapper,
-                            OperationDtoValidator operationDtoValidator, AccountDtoValidator accountDtoValidator, RestAccountService restAccountService) {
+                            OperationDtoValidator operationDtoValidator, AccountDtoValidator accountDtoValidator,
+                            RestAccountService restAccountService) {
         this.operationRepository = operationRepository;
         this.accountRepository = accountRepository;
         this.operationToDtoMapper = operationToDtoMapper;
@@ -58,12 +64,15 @@ public class OperationService implements IOperationService {
         Account account = null;
         Operation entity = null;
 
+
         Optional<Account> mayBeAccount = accountRepository.findById(accountUuid);
         if (mayBeAccount.isEmpty()) {
-            throw new ValidateException(List.of(new ResponseError("there is no account with id " + accountUuid + " in database")));
+            log.error("There is no account with id " + accountUuid + " in database.");
+            throw new ValidateException(List.of(new ResponseError("There is no account with id " + accountUuid + " in database.")));
         }
         if (!mayBeAccount.get().getCurrency().equals(operationDto.getCurrencyUuid())) {
-            throw new ValidateException(List.of(new ResponseError("there is no that currency in that account")));
+            log.error("There is no that currency in that account.");
+            throw new ValidateException(List.of(new ResponseError("There is no that currency in that account.")));
         }
 
         entity = operationToDtoMapper.dtoToEntity(operationDto);
@@ -74,7 +83,9 @@ public class OperationService implements IOperationService {
         entity.setDtUpdate(dateTime);
         entity.setDtExecute(dateTime);
         entity.setOperationCategory(operationDto.getOperationCategory());
-        return operationToDtoMapper.entityToDto(operationRepository.save(entity));
+        Operation save = operationRepository.save(entity);
+        log.info("Operation " + save + " saved");
+        return operationToDtoMapper.entityToDto(save);
     }
 
     @Override
@@ -82,18 +93,23 @@ public class OperationService implements IOperationService {
         accountDtoValidator.validateLoginFromToken(uuid);
         operationDtoValidator.validateUuid(uuid);
         operationDtoValidator.validatePage(pageNumber, size);
-        Pageable pageable = Pageable.ofSize(size).withPage(pageNumber - 1);
-        int totalElements = operationRepository.findAll().size();
-        List<Operation> content = operationRepository.findAllOperationByAccountId(uuid);
-        int totalPages = totalElements / size;
+        Account account = accountDtoValidator.isAccountExist(uuid);
+
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("dtUpdate").descending());
+        Page<Operation> operations = operationRepository.findAllByAccountUuid(account, pageable);
+        int totalElements = (int) operations.getTotalElements();
+        List<Operation> content = operations.getContent();
+        int totalPages = operations.getTotalPages();
+        boolean isLast = operations.isLast();
+
         return OperationPageDto.builder()
                 .number(pageNumber)
                 .size(size)
-                .totalPages(totalPages == 0 ? 1 : totalPages)
+                .totalPages(totalPages)
                 .totalElements(totalElements)
-                .first(pageNumber == 1)
+                .first(pageNumber == 0)
                 .numberOfElements(content.size())
-                .last(isLastElement(pageable, totalElements))
+                .last(isLast)
                 .content(content.stream()
                         .map(operationToDtoMapper::entityToDto)
                         .collect(Collectors.toList())
@@ -114,20 +130,24 @@ public class OperationService implements IOperationService {
         boolean isPresentOperation = operationRepository.findById(operationUuid).isPresent();
 
         if (!isPresentAccount) {
-            throw new ValidateException(List.of(new ResponseError("there is no account with id " + accountUuid + " in database")));
+            log.error("There is no account with id " + accountUuid + " in the database.");
+            throw new ValidateException(List.of(new ResponseError("There is no account with id " + accountUuid + " in the database.")));
         } else if (!isPresentOperation) {
-            throw new ValidateException(List.of(new ResponseError("there is no operation with id " + operationUuid + " in database")));
+            log.error("There is no operation with id " + operationUuid + " in database.");
+            throw new ValidateException(List.of(new ResponseError("There is no operation with id " + operationUuid + " in database.")));
         }
 
         CategoryDto category = restAccountService.getCategory(operationDTO.getOperationCategory());
         CurrencyDto currency = restAccountService.getCurrency(operationDTO.getCurrencyUuid());
 
         if (category == null) {
-            throw new ValidateException(List.of(new ResponseError("there is no category " +
-                    operationDTO.getOperationCategory() + " in database")));
+            log.error("There is no category " + operationDTO.getOperationCategory() + " in the database.");
+            throw new SingleValidateException(new ResponseError("There is no category " +
+                    operationDTO.getOperationCategory() + " in the database."));
         } else if (currency == null) {
-            throw new ValidateException(List.of(new ResponseError("there is no currency " +
-                    operationDTO.getCurrencyUuid() + " in database")));
+            log.error("There is no currency " + operationDTO.getCurrencyUuid() + " in the database.");
+            throw new SingleValidateException(new ResponseError("There is no currency " +
+                    operationDTO.getCurrencyUuid() + " in the database."));
         }
 
         Operation operation = operationRepository.findByUuid(operationUuid);
@@ -142,6 +162,7 @@ public class OperationService implements IOperationService {
             operation.setCurrencyUuid(operationDTO.getCurrencyUuid());
             operation = operationRepository.save(operation);
         }
+        log.info("Operation " + operation + " updated.");
         return operationToDtoMapper.entityToDto(operation);
     }
 
@@ -153,22 +174,16 @@ public class OperationService implements IOperationService {
         operationDtoValidator.validateUuid(uuidOperation);
         operationDtoValidator.validateLongDateTimeFormat(dtUpdate);
 
-        Account account = accountRepository.findByUuid(accountUuid);
-        Operation operation = operationRepository.findByUuid(uuidOperation);
+        Account account = accountDtoValidator.isAccountExist(accountUuid);
+        Operation operation = operationDtoValidator.isOperationExist(uuidOperation);
 
-        if (account == null) {
-            throw new SingleValidateException(new ResponseError("there is no account with id " + accountUuid +
-                    " in database"));
-        } else if (operation == null) {
-            throw new SingleValidateException(new ResponseError("there is no operation with id " + uuidOperation +
-                    " in database"));
-        }
-
-        long updateTime = operation.getDtUpdate().toInstant(ZoneOffset.UTC).toEpochMilli();
+        long updateTime = getMilliSecondFromLocalDateTime(operation.getDtUpdate());
         if (operation.getAccountUuid().getUuid().equals(accountUuid) && updateTime == dtUpdate) {
             operationRepository.delete(operation);
+            log.info("Operation " + operation + " deleted");
         } else {
-            throw new ValidateException(List.of(new ResponseError("date of last update of the operation does not match")));
+            log.error("Date of last update of the operation does not match.");
+            throw new SingleValidateException(new ResponseError("Date of last update of the operation does not match."));
         }
     }
 }

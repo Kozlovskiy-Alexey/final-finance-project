@@ -32,4 +32,9 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<List<ResponseError>> badJsonParameter(ValidateException ex) {
         return new ResponseEntity<>(ex.getResponseErrors(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseError> singleValidateException(SingleValidateException ex) {
+        return new ResponseEntity<>(ex.getResponseError(), HttpStatus.BAD_REQUEST);
+    }
 }

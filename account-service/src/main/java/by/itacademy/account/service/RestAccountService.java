@@ -8,7 +8,7 @@ import by.itacademy.account.dto.CategoryPageDto;
 import by.itacademy.account.dto.CurrencyDto;
 import by.itacademy.account.dto.CurrencyPageDto;
 import by.itacademy.account.service.api.IRestService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 public class RestAccountService implements IRestService {
     private final static String URL_GET_CURRENCY_PAGE = "http://localhost:8082/api/v1/classifier/currency";
@@ -45,7 +46,8 @@ public class RestAccountService implements IRestService {
                     .findFirst()
                     .orElse(null);
         } catch (RestClientException ex) {
-            throw new SingleValidateException(new ResponseError("Error while getting currency from data base."));
+            log.error("Error while getting currencyId " + currencyId + "  from data base.");
+            throw new SingleValidateException(new ResponseError("Error while getting currencyId " + currencyId + "  from data base."));
         }
     }
 
@@ -65,7 +67,8 @@ public class RestAccountService implements IRestService {
                     .orElse(null);
             return categoryDto;
         } catch (RestClientException ex) {
-            throw new SingleValidateException(new ResponseError("there is no category " + categoryId + "in database"));
+            log.error("Error while getting categoryId " + categoryId + " from the database.");
+            throw new SingleValidateException(new ResponseError("Error while getting categoryId " + categoryId + " from the database."));
         }
     }
 

@@ -2,6 +2,7 @@ package by.itacademy.classifier.dto.util.validator;
 
 import by.itacademy.classifier.advice.ValidateException;
 import by.itacademy.classifier.dto.CategoryDto;
+import by.itacademy.classifier.entity.Category;
 import by.itacademy.classifier.repository.ICategoryRepository;
 import by.itacademy.classifier.dto.util.validator.api.IDtoValidator;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class CategoryDtoValidator implements IDtoValidator<CategoryDto> {
         if (dto.getTitle().isEmpty()) {
             validateException.addError("category shouldn't be empty");
         }
-        if (validateCurrency(dto.getTitle())) {
+        if (validateCategory(dto.getTitle())) {
             validateException.addError("category " + dto.getTitle() + " is already in the database");
         }
         if (!validateException.getResponseErrors().isEmpty()) {
@@ -31,8 +32,12 @@ public class CategoryDtoValidator implements IDtoValidator<CategoryDto> {
         }
     }
 
-    private boolean validateCurrency(String category) {
-        return categoryRepository.findAll().stream()
-                .anyMatch(o -> o.getTitle().equals(category));
+    private boolean validateCategory(String category) {
+        for (Category c : categoryRepository.findAll()) {
+            if (!c.getTitle().equals(category)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,8 +1,8 @@
 package by.itacademy.classifier.repository;
 
 import by.itacademy.classifier.entity.Currency;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface ICurrencyRepository extends JpaRepository<Currency, String> {
+public interface ICurrencyRepository extends PagingAndSortingRepository<Currency, String> {
 
 }

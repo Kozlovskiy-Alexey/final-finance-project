@@ -34,7 +34,7 @@ public class ClassifierController {
     }
 
     @GetMapping("/currency")
-    public ResponseEntity<CurrencyPageDto> getCurrencyPage(@RequestParam(name = "page", defaultValue = "1") int page,
+    public ResponseEntity<CurrencyPageDto> getCurrencyPage(@RequestParam(name = "page", defaultValue = "0") int page,
                                                            @RequestParam(name = "size", defaultValue = "100") int size) {
         CurrencyPageDto dto = currencyService.getCurrencyPage(page, size);
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class ClassifierController {
     }
 
     @GetMapping("/operation/category")
-    public ResponseEntity<CategoryPageDto> getCategoryPage(@RequestParam(name = "page", defaultValue = "1") int page,
+    public ResponseEntity<CategoryPageDto> getCategoryPage(@RequestParam(name = "page", defaultValue = "0") int page,
                                                            @RequestParam(name = "size", defaultValue = "100") int size) {
         CategoryPageDto dto = categoryService.getCategoryPage(page, size);
         return new ResponseEntity<>(dto, HttpStatus.OK);

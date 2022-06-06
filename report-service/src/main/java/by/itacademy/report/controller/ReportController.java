@@ -54,8 +54,12 @@ public class ReportController {
                 .body(file);
     }
 
-    @RequestMapping(method = RequestMethod.HEAD, path = "/{uuid}")
-    public ResponseEntity<String> checkAvailableReport(@PathVariable(name = "uuid") String reportId) {
+    @RequestMapping(method = RequestMethod.HEAD, value ={"", "/", "/{uuid}"})
+    public ResponseEntity<String> checkAvailableReport(@PathVariable(name = "uuid", required = false) String reportId) {
+        if (reportId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        System.out.println(reportId);
         boolean isPresent = reportService.checkReport(reportId).isPresent();
         return isPresent ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

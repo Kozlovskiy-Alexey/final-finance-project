@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,9 +21,9 @@ class IScheduleRepositoryTest extends IntegrationTestBase {
 
     @Test
     void testGetById() {
-        ScheduledOperation byId = scheduledOperationRepository.getById(SCHEDULED_OPERATION_ID);
-        assertNotNull(byId.getId());
-        assertEquals(SCHEDULED_OPERATION_ID, byId.getId());
+        Optional<ScheduledOperation> byId = scheduledOperationRepository.findById(SCHEDULED_OPERATION_ID);
+        assertNotNull(byId.get().getId());
+        assertEquals(SCHEDULED_OPERATION_ID, byId.get().getId());
     }
 
     @Test

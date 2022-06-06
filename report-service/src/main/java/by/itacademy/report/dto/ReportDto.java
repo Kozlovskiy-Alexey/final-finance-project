@@ -4,6 +4,7 @@ import by.itacademy.report.dto.api.ReportStatus;
 import by.itacademy.report.dto.util.serializer.IntegerLocalDateTimeDeserializer;
 import by.itacademy.report.dto.util.serializer.IntegerLocalDateTimeSerializer;
 import by.itacademy.report.service.ReportType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,8 +17,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,6 +45,7 @@ public class ReportDto implements Serializable {
 
     private String description;
 
+    @JsonIgnore
     private RequestParamsDto params;
 
 }

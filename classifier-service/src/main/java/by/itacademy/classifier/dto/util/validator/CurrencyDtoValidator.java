@@ -2,11 +2,13 @@ package by.itacademy.classifier.dto.util.validator;
 
 import by.itacademy.classifier.advice.ValidateException;
 import by.itacademy.classifier.dto.CurrencyDto;
+import by.itacademy.classifier.entity.Currency;
 import by.itacademy.classifier.repository.ICurrencyRepository;
 import by.itacademy.classifier.dto.util.validator.api.IDtoValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CurrencyDtoValidator implements IDtoValidator<CurrencyDto> {
@@ -38,7 +40,10 @@ public class CurrencyDtoValidator implements IDtoValidator<CurrencyDto> {
     }
 
     private boolean validateCurrency(String currency) {
-        return currencyRepository.findAll().stream()
-                .anyMatch(o -> o.getTitle().equals(currency));
+        for (Currency c : currencyRepository.findAll()) {
+            if (!c.getTitle().equals(currency))
+                return false;
+        }
+        return true;
     }
 }

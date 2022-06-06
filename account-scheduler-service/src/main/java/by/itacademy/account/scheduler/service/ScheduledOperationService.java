@@ -20,16 +20,19 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,22 +83,27 @@ public class ScheduledOperationService implements IScheduledOperationService {
 
     @Override
     public ScheduledOperationPageDto get(int page, int size) {
-        Pageable pageable = Pageable.ofSize(size).withPage(page - 1);
-        List<ScheduledOperation> scheduledOperations = scheduledOperationRepository.findAll(pageable).getContent();
-        int totalElements = scheduledOperationRepository.findAll().size();
-        int totalPages = totalElements / size;
-        List<ScheduledOperationDto> scheduledOperationsDto = scheduledOperations.stream()
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dtUpdate").descending());
+        Page<ScheduledOperation> operationPage = scheduledOperationRepository.findAll(pageable);
+        List<ScheduledOperation> content = operationPage.getContent();
+        int totalElements = (int) operationPage.getTotalElements();
+        int totalPages = operationPage.getTotalPages();
+        boolean isLast = operationPage.isLast();
+        boolean isFirst = operationPage.isFirst();
+
+        List<ScheduledOperationDto> scheduledOperations = content.stream()
                 .map(scheduledOperationToDtoMapper::entityToDto)
                 .collect(Collectors.toList());
+
         return ScheduledOperationPageDto.builder()
                 .number(page)
                 .size(size)
-                .totalPages(totalPages == 0 ? 1 : totalPages)
+                .totalPages(totalPages)
                 .totalElements(totalElements)
-                .first(page == 1)
-                .numberOfElements(scheduledOperations.size())
-                .last(isLastElement(pageable, totalElements))
-                .content(scheduledOperationsDto)
+                .first(isFirst)
+                .numberOfElements(content.size())
+                .last(isLast)
+                .content(scheduledOperations)
                 .build();
     }
 
@@ -103,15 +111,15 @@ public class ScheduledOperationService implements IScheduledOperationService {
     public ScheduledOperationDto update(String operationUuid, long lastUpdate, ScheduledOperationDto dto) {
         operationDtoValidator.validateUuid(operationUuid);
         operationDtoValidator.validateLongDateTimeFormat(lastUpdate);
-        ScheduledOperation operation = null;
-        try {
-            operation = scheduledOperationRepository.getById(operationUuid);
-        } catch (EntityNotFoundException ex) {
-            throw new ValidateException(List.of(new ResponseError("there is no operation id " + operationUuid +
-                    " in database")));
+
+        Optional<ScheduledOperation> operation = scheduledOperationRepository.findById(operationUuid);
+        if (operation.isEmpty()) {
+            throw new SingleValidateException(new ResponseError("there is no operation id " + operationUuid +
+                    " in database"));
         }
+
         LocalDateTime dateTime = Instant.ofEpochMilli(lastUpdate).atOffset(ZoneOffset.UTC).toLocalDateTime();
-        LocalDateTime dtUpdate = operation.getDtUpdate();
+        LocalDateTime dtUpdate = operation.get().getDtUpdate();
         if (dtUpdate.equals(dateTime)) {
             boolean isDelete = deleteJobAndTriggers(operationUuid);
             ScheduledOperation scheduledOperation = scheduledOperationToDtoMapper.dtoToEntity(dto);

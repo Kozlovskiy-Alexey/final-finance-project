@@ -14,19 +14,23 @@ import by.itacademy.account.entity.Balance;
 import by.itacademy.account.service.api.IAccountService;
 import by.itacademy.account.dto.util.mapper.AccountToDtoMapper;
 import by.itacademy.account.dto.util.validator.AccountDtoValidator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class AccountService implements IAccountService {
@@ -72,6 +76,7 @@ public class AccountService implements IAccountService {
             account = accountRepository.save(entity);
             dto = accountToDtoMapper.entityToDto(account);
             dto.setBalance(0);
+            log.info("Account " + dto + " saved.");
         }
         return dto;
     }
@@ -79,18 +84,22 @@ public class AccountService implements IAccountService {
     @Override
     public AccountPageDto getPage(int pageNumber, int size) {
         accountDtoValidator.validatePage(pageNumber, size);
-        Pageable pageable = Pageable.ofSize(size).withPage(pageNumber - 1);
-        int totalElements = accountRepository.findAll().size();
-        List<Account> content = accountRepository.findAll(pageable).getContent();
-        int totalPages = totalElements / size;
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("dtUpdate").descending());
+        Page<Account> accounts = accountRepository.findAll(pageable);
+        List<Account> content = accounts.getContent();
+        int totalElements = (int) accounts.getTotalElements();
+        int totalPages = accounts.getTotalPages();
+        boolean isLast = accounts.isLast();
+        boolean isFirst = accounts.isFirst();
+
         return AccountPageDto.builder()
                 .number(pageNumber)
                 .size(size)
-                .totalPages(totalPages == 0 ? 1 : totalPages)
+                .totalPages(totalPages)
                 .totalElements(totalElements)
-                .first(pageNumber == 1)
+                .first(isFirst)
                 .numberOfElements(content.size())
-                .last(isLastElement(pageable, totalElements))
+                .last(isLast)
                 .content(content.stream()
                         .map(accountToDtoMapper::entityToDto)
                         .collect(Collectors.toList())
@@ -101,36 +110,27 @@ public class AccountService implements IAccountService {
     @Override
     public AccountDto get(String uuid) {
         if (!accountDtoValidator.validateUuid(uuid)) {
+            log.error("Account uuid is not correct.");
             throw new SingleValidateException(new ResponseError("account uuid is not correct"));
         }
-
-        try {
-            Account entity = accountRepository.getById(uuid);
-            accountDtoValidator.validateLoginFromToken(uuid);
-            return accountToDtoMapper.entityToDto(entity);
-        } catch (EntityNotFoundException ex) {
-            throw new SingleValidateException(new ResponseError("there is no account id in the database"));
-        }
+        Account entity = accountDtoValidator.isAccountExist(uuid);
+        accountDtoValidator.validateLoginFromToken(uuid);
+        return accountToDtoMapper.entityToDto(entity);
     }
 
     @Override
     @Transactional
     public AccountDto update(String uuid, long lastUpdate, AccountDto accountDTO) {
-        Account entity = null;
         if (!accountDtoValidator.validateUuid(uuid)) {
-            throw new SingleValidateException(new ResponseError("account uuid is not correct"));
+            log.error("Account uuid is not correct.");
+            throw new SingleValidateException(new ResponseError("Account uuid is not correct."));
         }
-        try {
-            entity = accountRepository.getById(uuid);
-            accountDtoValidator.validateLoginFromToken(uuid);
-        } catch (EntityNotFoundException ex) {
-            throw new SingleValidateException(new ResponseError("there is no account id in the database"));
-        }
-        accountDtoValidator.validateLongDateTimeFormat(lastUpdate);
         accountDtoValidator.validateDto(accountDTO);
+        Account entity = accountDtoValidator.isAccountExist(uuid);
+        accountDtoValidator.validateLoginFromToken(uuid);
+        accountDtoValidator.validateLongDateTimeFormat(lastUpdate);
 
         long time = getMilliSecondFromLocalDateTime(entity.getDtUpdate());
-
         if (time == lastUpdate) {
             entity.setTitle(accountDTO.getTitle());
             entity.setDescription(accountDTO.getDescription());
@@ -139,8 +139,10 @@ public class AccountService implements IAccountService {
             entity.setDtUpdate(LocalDateTime.now());
             entity = accountRepository.save(entity);
         } else {
-            throw new SingleValidateException(new ResponseError("date of last update does not match"));
+            log.error("Date of last update does not match.");
+            throw new SingleValidateException(new ResponseError("Date of last update does not match."));
         }
+        log.info("Account " + entity + " updated.");
         return accountToDtoMapper.entityToDto(entity);
     }
 }

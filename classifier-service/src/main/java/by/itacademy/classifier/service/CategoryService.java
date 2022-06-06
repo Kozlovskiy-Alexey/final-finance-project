@@ -7,6 +7,8 @@ import by.itacademy.classifier.entity.Category;
 import by.itacademy.classifier.service.api.ICategoryService;
 import by.itacademy.classifier.dto.util.mapper.CategoryToDtoMapper;
 import by.itacademy.classifier.dto.util.validator.CategoryDtoValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -45,21 +47,27 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryPageDto getCategoryPage(int page, int size) {
         categoryDtoValidator.validatePage(page, size);
-        Pageable pageable = Pageable.ofSize(size).withPage(page - 1);
-        List<Category> categories = categoryRepository.findAll(pageable).getContent();
-        int totalElements = categoryRepository.findAll().size();
-        int totalPages = totalElements / size;
-        List<CategoryDto> dtoList = categories.stream()
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Category> categories = categoryRepository.findAll(pageable);
+        int totalElements = (int) categories.getTotalElements();
+        int totalPages = categories.getTotalPages();
+        boolean isFirst = categories.isFirst();
+        boolean isLast = categories.isLast();
+        List<Category> content = categories.getContent();
+
+        List<CategoryDto> dtoList = content.stream()
                 .map(mapper::entityToDto)
                 .collect(Collectors.toList());
+
         return CategoryPageDto.builder()
                 .number(page)
                 .size(size)
-                .totalPages(totalPages == 0 ? 1 : totalPages)
+                .totalPages(totalPages)
                 .totalElements(totalElements)
-                .first(page == 1)
-                .numberOfElements(categories.size())
-                .last(isLastElement(pageable, totalElements))
+                .first(isFirst)
+                .numberOfElements(content.size())
+                .last(isLast)
                 .content(dtoList)
                 .build();
     }
